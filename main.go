@@ -32,11 +32,16 @@ func main() {
 	db.AutoMigrate(&Bro{})
 
 	r := gin.Default()
-
+	//GET ALL
 	r.GET("/bros/", GetBros)
-
+	//GET BY ID
+	r.GET("/bros/:id", GetBroID)
+	//CREATE
 	r.POST("/bros/", CreateBro)
-
+	//UPDATE
+	r.PUT("/bros/:id")
+	//DELETE
+	r.DELETE("/bros/:id")
 	r.Run(":8080")
 }
 
@@ -48,6 +53,18 @@ func GetBros(c *gin.Context) {
 		fmt.Println(err)
 	} else {
 		c.JSON(200, bros)
+	}
+}
+
+//GetBroID self explanatory title
+func GetBroID(c *gin.Context) {
+	id := c.Params.ByName("id")
+	var bro Bro
+	if err := db.Where("id=?", id).First(&bro).Error; err != nil {
+		c.AbortWithStatus(404)
+		fmt.Println(err)
+	} else {
+		c.JSON(200, bro)
 	}
 }
 
