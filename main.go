@@ -39,9 +39,9 @@ func main() {
 	//CREATE
 	r.POST("/bros/", CreateBro)
 	//UPDATE
-	r.PUT("/bros/:id")
+	r.PUT("/bros/:id", UpdateBro)
 	//DELETE
-	r.DELETE("/bros/:id")
+	r.DELETE("/bros/:id", DeleteBro)
 	r.Run(":8080")
 }
 
@@ -74,4 +74,26 @@ func CreateBro(c *gin.Context) {
 	c.BindJSON(&bro)
 	db.Create(&bro)
 	c.JSON(200, bro)
+}
+
+//UpdateBro here
+func UpdateBro(c *gin.Context) {
+	id := c.Params.ByName("id")
+	var bro Bro
+	if err := db.Where("id=?", id).First(&bro).Error; err != nil {
+		c.AbortWithStatus(404)
+		fmt.Println(err)
+	}
+	c.BindJSON(&bro)
+	db.Save(&bro)
+	c.JSON(200, bro)
+}
+
+//DeleteBro here
+func DeleteBro(c *gin.Context) {
+	id := c.Params.ByName("id")
+	var bro Bro
+	x := db.Where("id=?", id).Delete(&bro)
+	fmt.Println(x)
+	c.JSON(200, gin.H{"id #" + id: "deleted"})
 }
