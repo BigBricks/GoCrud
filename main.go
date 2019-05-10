@@ -33,9 +33,9 @@ func main() {
 
 	r := gin.Default()
 
-	r.GET("/people/", GetBros)
+	r.GET("/bros/", GetBros)
 
-	r.POST("/people/", CreateBro)
+	r.POST("/bros/", CreateBro)
 
 	r.Run(":8080")
 }
