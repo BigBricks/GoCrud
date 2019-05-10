@@ -1,5 +1,7 @@
 package main
 
+// only need mysql OR sqlite
+// both are included here for reference
 import (
 	"fmt"
 
@@ -8,18 +10,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-func main() {
-	db, err := gorm.Open("sqlite3", "/tmp/gorm.db")
-	defer db.Close()
-	if err != nil {
-		fmt.Println(err)
-	}
-	db.AutoMigrate(&Bro{})
-	r := gin.Default()
-	r.GET("/", GetBros)
-
-	r.Run(":8080")
-}
+var db *gorm.DB
+var err error
 
 //Bro comment for the linter to stop yelling
 type Bro struct {
@@ -28,29 +20,41 @@ type Bro struct {
 	LastName  string `json:"lastname"`
 }
 
-//dbCon
-// func dbCon() *gorm.DB {
-// 	var db, err = gorm.Open("sqlite3", "./gorm.db")
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
-// 	defer db.Close()
-// 	return db
-// }
+func main() {
+	db, err = gorm.Open("sqlite3", "./gorm.db")
 
-//GetBros func
-func GetBros(c *gin.Context) {
-	var bros []Bro
-	db, err := gorm.Open("sqlite3", "/tmp/gorm.db")
-	defer db.Close()
 	if err != nil {
 		fmt.Println(err)
 	}
-	db.Find(&bros)
-	if len(bros) <= 0 {
+
+	defer db.Close()
+
+	db.AutoMigrate(&Bro{})
+
+	r := gin.Default()
+
+	r.GET("/people/", GetBros)
+
+	r.POST("/people/", CreateBro)
+
+	r.Run(":8080")
+}
+
+//GetBros Comment for linter
+func GetBros(c *gin.Context) {
+	var bros []Bro
+	if err := db.Find(&bros).Error; err != nil {
 		c.AbortWithStatus(404)
-		fmt.Println("L")
+		fmt.Println(err)
 	} else {
 		c.JSON(200, bros)
 	}
+}
+
+//CreateBro here
+func CreateBro(c *gin.Context) {
+	var bro Bro
+	c.BindJSON(&bro)
+	db.Create(&bro)
+	c.JSON(200, bro)
 }
