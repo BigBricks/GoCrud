@@ -104,3 +104,22 @@ func DeleteBro(c *gin.Context) {
 	fmt.Println(x)
 	c.JSON(200, gin.H{"id #" + id: "deleted"})
 }
+
+//GetBroCode here
+func GetBroCode(c *gin.Context) {
+	var codes []BroCode
+	if err := db.Find(&codes).Error; err != nil {
+		c.AbortWithStatus(404)
+		fmt.Println(err)
+	} else {
+		c.JSON(200, codes)
+	}
+}
+
+//PostBroCode here
+func PostBroCode(c *gin.Context) {
+	var code BroCode
+	c.BindJSON(&code)
+	db.Create(&code)
+	c.JSON(200, code)
+}
