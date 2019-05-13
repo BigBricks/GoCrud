@@ -20,6 +20,12 @@ type Bro struct {
 	LastName  string `json:"lastname"`
 }
 
+//BroCode comment for linter
+type BroCode struct {
+	ID          uint   `json:"id"`
+	Description string `json:"description"`
+}
+
 func main() {
 	db, err = gorm.Open("sqlite3", "./gorm.db")
 
@@ -42,6 +48,7 @@ func main() {
 	r.PUT("/bros/:id", UpdateBro)
 	//DELETE
 	r.DELETE("/bros/:id", DeleteBro)
+	//RUN
 	r.Run(":8080")
 }
 
