@@ -116,6 +116,18 @@ func GetBroCode(c *gin.Context) {
 	}
 }
 
+//GetBroCodeID here
+func GetBroCodeID(c *gin.Context) {
+	id := c.Params.ByName("id")
+	var code BroCode
+	if err := db.Where("id=?", id).First(&code).Error; err != nil {
+		c.AbortWithStatus(404)
+		fmt.Println(err)
+	} else {
+		c.JSON(200, code)
+	}
+}
+
 //PostBroCode here
 func PostBroCode(c *gin.Context) {
 	var code BroCode
