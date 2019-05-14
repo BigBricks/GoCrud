@@ -135,3 +135,25 @@ func PostBroCode(c *gin.Context) {
 	db.Create(&code)
 	c.JSON(200, code)
 }
+
+//UpdateBroCode here
+func UpdateBroCode(c *gin.Context) {
+	id := c.Params.ByName("id")
+	var code BroCode
+	if err := db.Where("id=?", id).First(&code).Error; err != nil {
+		c.AbortWithStatus(404)
+		fmt.Println(err)
+	}
+	c.BindJSON(&code)
+	db.Save(&code)
+	c.JSON(200, code)
+}
+
+//DeleteBroCode here
+func DeleteBroCode(c *gin.Context) {
+	id := c.Params.ByName("id")
+	var code BroCode
+	x := db.Where("id=?", id).Delete(&code)
+	fmt.Println(x)
+	c.JSON(200, gin.H{"id #" + id: "deleted"})
+}
