@@ -36,7 +36,7 @@ func main() {
 	defer db.Close()
 
 	db.AutoMigrate(&Bro{})
-
+	//Router
 	r := gin.Default()
 	//GET ALL
 	r.GET("/bros/", GetBros)
